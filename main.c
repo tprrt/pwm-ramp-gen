@@ -33,8 +33,8 @@
 
 int main(void)
 {
-    int state = 0;
-    int step = PWM_STEP;
+    uint16_t state = 0;
+    uint16_t step = PWM_STEP;
     xtimer_ticks32_t last_wakeup = xtimer_now();
 
     printf("PWM ramp generator application\n");
@@ -42,15 +42,13 @@ int main(void)
     pwm_init(PWM_DEV(0), PWM_MODE, PWM_FREQ, PWM_RES);
 
     for (;;) {
-	pwm_set(PWM_DEV(0), 0, state);
+        pwm_set(PWM_DEV(0), 0, state);
 
-	state += step;
-	if (state <= 0 || state >= (int)PWM_RES) {
+        state += step;
+        if (state <= 0 || state >= (int)PWM_RES) {
             step = -step;
         }
 
-	xtimer_periodic_wakeup(&last_wakeup, PWM_INTERVAL);
+        xtimer_periodic_wakeup(&last_wakeup, PWM_INTERVAL);
     }
-
-    return 0;
 }
