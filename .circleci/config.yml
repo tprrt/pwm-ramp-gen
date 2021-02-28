@@ -1,0 +1,33 @@
+version: 2.1
+executors:
+  docker-riotbuild:
+    docker:
+      - image: riot/riotbuild
+    resource_class: small
+jobs:
+  build:
+    executor: docker-riotbuild
+    steps:
+      - checkout
+      - run:
+          name: Checkout git submodules
+          command: |
+            git submodule sync
+            git submodule update --init --recursive
+      # - setup_remote_docker:
+      #     docker_layer_caching: true
+      - run:
+          name: Build the application
+          command: |
+            make
+      - store_artifacts:
+          path: bin
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
