@@ -14,7 +14,7 @@ It is a simple `RIOT-OS`_ application which generate a continuous PWM signal of
 1Khz, on the first channel of the first PWM device, and whose duty which
 increases (then decreases) every 10ms.
 
-::
+.. code-block:: bash
 
     # To pull the submodules' sources
     git submodule sync
@@ -38,7 +38,7 @@ increases (then decreases) every 10ms.
 
 Use the following command to validate the `circleci`_ pipeline:
 
-::
+.. code-block:: bash
 
     podman run --rm --security-opt seccomp=unconfined --security-opt label=disable -v $(pwd):/data circleci/circleci-cli:alpine config validate /data/.circleci/config.yml --token $TOKEN
 
