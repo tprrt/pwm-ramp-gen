@@ -5,7 +5,7 @@ executors:
   docker-riotbuild:
     docker:
       - image: riot/riotbuild
-    resource_class: small
+    resource_class: large
 jobs:
   build:
     executor: docker-riotbuild
@@ -22,8 +22,8 @@ jobs:
             wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
             unzip build-wrapper-linux-x86.zip
             cp build-wrapper-linux-x86/libinterceptor-x86_64.so build-wrapper-linux-x86/libinterceptor-haswell.so
-      # - setup_remote_docker:
-      #     docker_layer_caching: true
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Build the application
           command: |
