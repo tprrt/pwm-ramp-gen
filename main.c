@@ -1,8 +1,7 @@
 /*
  * Copyright (C) 2021 Thomas Perrot <thomas.perrot@tupi.fr>
  *
- * This file is subject to the terms and conditions of the GNU General Public
- * License v3. See the file LICENSE in the top level directory for more details.
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 /**
