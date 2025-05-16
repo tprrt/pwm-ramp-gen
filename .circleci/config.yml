@@ -6,7 +6,16 @@ executors:
     docker:
       - image: riot/riotbuild
     resource_class: medium
+  docker-sonarcloud:
+    docker:
+      - image: cimg/node:20.8.1
+    resource_class: medium
 jobs:
+  static-analysis:
+    executor: docker-sonarcloud
+    steps:
+      - checkout
+      - sonarcloud/scan
   build:
     executor: docker-riotbuild
     steps:
@@ -28,20 +37,27 @@ jobs:
           name: Build the application
           command: |
             ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bin make
-      - sonarcloud/scan
       - store_artifacts:
           path: bin
 workflows:
   version: 2
   commit-build:
     jobs:
-      - build:
+      - static-analysis:
           context:
             - sonarcloud.io
           filters:
             branches:
               ignore:
                 - gh-pages
+      - build:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+          requires:
+            - static-analysis
+
   weekly-build:
     triggers:
       - schedule:
@@ -51,6 +67,17 @@ workflows:
               only:
                 - master
     jobs:
-      - build:
+      - static-analysis:
           context:
             - sonarcloud.io
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+      - build:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+          requires:
+            - static-analysis
