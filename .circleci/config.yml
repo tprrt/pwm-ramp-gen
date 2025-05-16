@@ -5,7 +5,7 @@ executors:
   docker-riotbuild:
     docker:
       - image: riot/riotbuild
-    resource_class: large
+    resource_class: medium
 jobs:
   build:
     executor: docker-riotbuild
