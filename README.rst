@@ -43,5 +43,19 @@ Use the following command to validate the `circleci`_ pipeline:
     podman run --rm --security-opt seccomp=unconfined --security-opt label=disable -v $(pwd):/data circleci/circleci-cli:alpine config validate /data/.circleci/config.yml --token $TOKEN
 
 
+-------
+Support
+-------
+
+If you find this project useful, please consider supporting its development:
+
+- PayPal: `paypal.me/tprrt <https://paypal.me/tprrt>`_
+
+------------
+Contributing
+------------
+
+Contributions are welcome! Please see `CONTRIBUTING.rst <CONTRIBUTING.rst>`_ for guidelines.
+
 .. _circleci: https://circleci.com
 .. _RIOT-OS: https://github.com/RIOT-OS/RIOT
