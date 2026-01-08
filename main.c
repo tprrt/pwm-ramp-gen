@@ -15,6 +15,7 @@
  * @}
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "periph/pwm.h"
@@ -23,14 +24,13 @@
 #define PWM_FREQ        (1000U)
 #define PWM_INTERVAL    (10LU * US_PER_MS) /* 10 ms */
 #define PWM_MODE        PWM_LEFT
-#define PWM_RES         (256U)
-#define PWR_SLEEP       (1U)
+#define PWM_RES         (256)
 #define PWM_STEP        (10)
 
 int main(void)
 {
     uint16_t state = 0;
-    uint16_t step = PWM_STEP;
+    bool up = true;
     xtimer_ticks32_t last_wakeup = xtimer_now();
 
     printf("PWM ramp generator application\n");
@@ -40,9 +40,21 @@ int main(void)
     for (;;) {
         pwm_set(PWM_DEV(0), 0, state);
 
-        state += step;
-        if (state <= 0 || state >= (int)PWM_RES) {
-            step = -step;
+        if (up) {
+            if (state + PWM_STEP >= PWM_RES - 1) {
+                state = PWM_RES - 1;
+                up = false;
+            } else {
+                state += PWM_STEP;
+            }
+        } else {
+            if (state < PWM_STEP) {
+                state = 0;
+                up = true;
+            }
+            else {
+                state -= PWM_STEP;
+            }
         }
 
         xtimer_periodic_wakeup(&last_wakeup, PWM_INTERVAL);
