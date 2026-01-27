@@ -1,27 +1,53 @@
 version: 2.1
+
 orbs:
   sonarcloud: sonarsource/sonarcloud@2.0.0
+
 executors:
   docker-riotbuild:
     docker:
       - image: riot/riotbuild
     resource_class: medium
-jobs:
-  build-and-analyze:
-    executor: docker-riotbuild
+
+commands:
+  checkout-with-submodules:
+    description: "Checkout code and restore/update submodules with caching"
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - submodules-v1-{{ checksum ".gitmodules" }}
+            - submodules-v1-
       - run:
           name: Checkout git submodules
           command: |
             git submodule sync
             git submodule update --init --recursive
+      - save_cache:
+          key: submodules-v1-{{ checksum ".gitmodules" }}
+          paths:
+            - .git/modules
+
+jobs:
+  build-and-analyze:
+    executor: docker-riotbuild
+    steps:
+      - checkout-with-submodules
+      - restore_cache:
+          keys:
+            - sonar-wrapper-v1
       - run:
           name: Install the SonarCloud scanner wrapper
           command: |
-            wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
-            unzip build-wrapper-linux-x86.zip
-            cp build-wrapper-linux-x86/libinterceptor-x86_64.so build-wrapper-linux-x86/libinterceptor-haswell.so
+            if [ ! -d "build-wrapper-linux-x86" ]; then
+              wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+              unzip build-wrapper-linux-x86.zip
+              cp build-wrapper-linux-x86/libinterceptor-x86_64.so build-wrapper-linux-x86/libinterceptor-haswell.so
+            fi
+      - save_cache:
+          key: sonar-wrapper-v1
+          paths:
+            - build-wrapper-linux-x86
       - run:
           name: Build the application with build-wrapper
           command: |
@@ -36,12 +62,7 @@ jobs:
       board:
         type: string
     steps:
-      - checkout
-      - run:
-          name: Checkout git submodules
-          command: |
-            git submodule sync
-            git submodule update --init --recursive
+      - checkout-with-submodules
       - run:
           name: Build for << parameters.board >>
           command: |
@@ -49,8 +70,8 @@ jobs:
       - store_artifacts:
           path: bin
           destination: << parameters.board >>
+
 workflows:
-  version: 2
   commit-build:
     jobs:
       - build-and-analyze:
