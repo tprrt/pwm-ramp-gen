@@ -29,6 +29,26 @@ jobs:
       - sonarcloud/scan
       - store_artifacts:
           path: bin
+
+  build:
+    executor: docker-riotbuild
+    parameters:
+      board:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Checkout git submodules
+          command: |
+            git submodule sync
+            git submodule update --init --recursive
+      - run:
+          name: Build for << parameters.board >>
+          command: |
+            make BOARD=<< parameters.board >>
+      - store_artifacts:
+          path: bin
+          destination: << parameters.board >>
 workflows:
   version: 2
   commit-build:
@@ -36,6 +56,13 @@ workflows:
       - build-and-analyze:
           context:
             - sonarcloud.io
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+      - build:
+          name: build-arduino-leonardo
+          board: arduino-leonardo
           filters:
             branches:
               ignore:
@@ -53,3 +80,6 @@ workflows:
       - build-and-analyze:
           context:
             - sonarcloud.io
+      - build:
+          name: build-arduino-leonardo
+          board: arduino-leonardo
