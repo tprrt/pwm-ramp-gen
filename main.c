@@ -25,6 +25,7 @@
 #define PWM_INTERVAL    (10LU * US_PER_MS) /* 10 ms */
 #define PWM_MODE        PWM_LEFT
 #define PWM_RES         (256)
+#define PWM_MAX         (PWM_RES - 1)
 #define PWM_STEP        (10)
 
 int main(void)
@@ -41,8 +42,8 @@ int main(void)
         pwm_set(PWM_DEV(0), 0, state);
 
         if (up) {
-            if (state + PWM_STEP >= PWM_RES - 1) {
-                state = PWM_RES - 1;
+            if (state + PWM_STEP >= PWM_MAX) {
+                state = PWM_MAX;
                 up = false;
             } else {
                 state += PWM_STEP;
@@ -51,8 +52,7 @@ int main(void)
             if (state < PWM_STEP) {
                 state = 0;
                 up = true;
-            }
-            else {
+            } else {
                 state -= PWM_STEP;
             }
         }
