@@ -35,23 +35,22 @@ jobs:
       - checkout-with-submodules
       - restore_cache:
           keys:
-            - sonar-wrapper-v1
+            - cargo-v1-{{ checksum "Cargo.toml" }}
+            - cargo-v1-
       - run:
-          name: Install the SonarCloud scanner wrapper
+          name: Install Clippy
+          command: rustup component add clippy
+      - run:
+          name: Generate Clippy report
           command: |
-            if [ ! -d "build-wrapper-linux-x86" ]; then
-              wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
-              unzip build-wrapper-linux-x86.zip
-              cp build-wrapper-linux-x86/libinterceptor-x86_64.so build-wrapper-linux-x86/libinterceptor-haswell.so
-            fi
+            cargo clippy --message-format=json > clippy-report.json || true
+      - run:
+          name: Build the application
+          command: make
       - save_cache:
-          key: sonar-wrapper-v1
+          key: cargo-v1-{{ checksum "Cargo.toml" }}
           paths:
-            - build-wrapper-linux-x86
-      - run:
-          name: Build the application with build-wrapper
-          command: |
-            ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bin make
+            - ~/.cargo/registry
       - sonarcloud/scan
       - store_artifacts:
           path: bin
@@ -82,8 +81,8 @@ workflows:
               ignore:
                 - gh-pages
       - build:
-          name: build-arduino-leonardo
-          board: arduino-leonardo
+          name: build-nucleo-f746zg
+          board: nucleo-f746zg
           filters:
             branches:
               ignore:
@@ -102,5 +101,5 @@ workflows:
           context:
             - sonarcloud.io
       - build:
-          name: build-arduino-leonardo
-          board: arduino-leonardo
+          name: build-nucleo-f746zg
+          board: nucleo-f746zg

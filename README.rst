@@ -10,9 +10,9 @@
 PWM ramp generator
 ==================
 
-It is a simple `RIOT-OS`_ application which generate a continuous PWM signal of
-1Khz, on the first channel of the first PWM device, and whose duty which
-increases (then decreases) every 10ms.
+It is a simple `RIOT-OS`_ application written in Rust which generates a
+continuous PWM signal of 1Khz, on the first channel of the first PWM device,
+and whose duty cycle increases (then decreases) every 10ms.
 
 .. code-block:: bash
 
@@ -31,6 +31,7 @@ increases (then decreases) every 10ms.
     export DOCKER_RUN_FLAGS="--rm -i -t --security-opt seccomp=unconfined --security-opt label=disable --userns=keep-id"
     export DOCKER_MAKE_ARGS="-j$(nproc)"
 
+    export BOARD=arduino-leonardo
     make
 
 

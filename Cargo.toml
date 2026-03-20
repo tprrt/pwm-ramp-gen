@@ -1,0 +1,18 @@
+[package]
+name = "pwm-ramp-gen"
+version = "0.1.0"
+edition = "2018"
+resolver = "2"
+autobins = false
+
+[lib]
+name = "pwm_ramp_gen"
+crate-type = ["staticlib"]
+path = "src/main.rs"
+
+[profile.release]
+panic = "abort"
+
+[dependencies]
+riot-wrappers = { version = "0.7", features = ["set_panic_handler"], default-features = false }
+riot-sys = "0.7"
