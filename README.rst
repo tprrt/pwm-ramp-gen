@@ -31,7 +31,7 @@ and whose duty cycle increases (then decreases) every 10ms.
     export DOCKER_RUN_FLAGS="--rm -i -t --security-opt seccomp=unconfined --security-opt label=disable --userns=keep-id"
     export DOCKER_MAKE_ARGS="-j$(nproc)"
 
-    export BOARD=arduino-leonardo
+    export BOARD=nucleo-f746zg
     make
 
 
