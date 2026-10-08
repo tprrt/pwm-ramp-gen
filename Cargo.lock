@@ -73,8 +73,6 @@ dependencies = [
 [[package]]
 name = "c2rust-bitfields-derive"
 version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3dd1601a7b828ab874d890e5a895563ca8ad485bdd3d2a359f148c8b72537241"
 dependencies = [
  "proc-macro2",
  "quote",
